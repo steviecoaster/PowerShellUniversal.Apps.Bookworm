@@ -9,7 +9,7 @@ Bookworm is a PowerShell Universal app that turns your device into a personal li
 
 ### Features
 
-- 📷 **Barcode Scanner** - Use your device's camera to scan ISBN barcodes
+- 📷 **Barcode Scanner** - Use your device's camera to scan ISBN barcodes via [PowerShellUniversal.Component.BarcodeScanner](https://github.com/steviecoaster/PowerShellUniversal.Component.BarcodeScanner)
 - 📖 **Automatic Metadata** - Fetches book details from Open Library (title, author, publisher, cover image, etc.)
 - � **Browse & Search** - Browse your entire collection with real-time search filtering
 - �🗄️ **SQLite Database** - Lightweight, portable storage for your book collection
@@ -99,9 +99,49 @@ Book data is stored in a SQLite database at:
 
 ---
 
-## Screenshots
+## Testing
 
-<!-- Add your screenshots below -->
+Bookworm includes Playwright-based UI tests using the [PSPlaywright](https://github.com/adamdriscoll/psplaywright) PowerShell module.
+
+### Setup
+
+1. **Install prerequisites**
+
+   ```powershell
+   Install-Module -Name PSPlaywright -Scope CurrentUser
+   Install-Module -Name Pester -Scope CurrentUser -MinimumVersion 5.0
+   ```
+
+2. **Install Playwright browsers**
+
+   ```powershell
+   .\tests\Setup-PlaywrightTests.ps1
+   ```
+
+### Running Tests
+
+```powershell
+# Run all tests with detailed output
+.\tests\Invoke-BookwormTests.ps1
+
+# Run against a different URL
+.\tests\Invoke-BookwormTests.ps1 -BaseUrl 'https://yourpsuinstance/bookworm'
+
+# Run with visible browser (non-headless)
+.\tests\Invoke-BookwormTests.ps1 -Headless $false
+```
+
+### Test Coverage
+
+- Homepage rendering and components
+- Navigation between pages
+- Browse page search functionality
+- Book details modal interactions
+- Dark mode compatibility
+
+---
+
+## Screenshots
 
 ### Home Page
 
