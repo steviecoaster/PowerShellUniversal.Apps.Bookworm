@@ -33,7 +33,7 @@ function Get-BookMetadata {
             $Book
         }
         catch {
-            Write-Error -Message 'Book not found, writing generic record'
+            Write-Warning -Message 'Book not found, writing generic record'
             $Book = [PSCustomObject]@{
                 ISBN          = $ISBN
                 Title         = "Unknown (ISBN: $ISBN)"
