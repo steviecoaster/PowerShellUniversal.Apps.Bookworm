@@ -1,0 +1,16 @@
+# Test artifacts
+tests/screenshots/
+tests/TestResults.xml
+TestResults.xml
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp files
+*.tmp
+*.temp
