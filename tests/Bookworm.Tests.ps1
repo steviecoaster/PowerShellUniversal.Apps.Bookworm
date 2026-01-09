@@ -36,6 +36,10 @@ AfterAll {
         Stop-PlaywrightBrowser -Browser $script:Browser -Confirm:$false
     }
     Stop-Playwright
+
+    if($screenshotPath){
+        Remove-Item $screenshotPath -Recurse -Force
+    }
 }
 
 Describe 'Bookworm Homepage' {
