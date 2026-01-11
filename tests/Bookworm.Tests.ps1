@@ -37,8 +37,10 @@ AfterAll {
     }
     Stop-Playwright
 
-    if($screenshotPath){
-        Remove-Item $screenshotPath -Recurse -Force
+    # Remove screenshots folder
+    $screenshotsDir = Join-Path $PSScriptRoot 'screenshots'
+    if (Test-Path $screenshotsDir) {
+        Remove-Item $screenshotsDir -Recurse -Force
     }
 }
 
