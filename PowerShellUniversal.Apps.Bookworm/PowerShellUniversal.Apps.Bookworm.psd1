@@ -12,7 +12,7 @@
     RootModule        = '.\PowerShellUniversal.Apps.Bookworm.psm1'
 
     # Version number of this module
-    ModuleVersion     = '1.0.1'
+    ModuleVersion     = '1.0.2'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -30,7 +30,7 @@
     Copyright         = '(c) Stephen Valdinger. All rights reserved.'
 
     # Description of the functionality provided by this module
-     Description = 'A personal library application for PowerShell Universal.'
+    Description       = 'A personal library application for PowerShell Universal.'
 
     # Minimum version of the PowerShell engine required by this module
     # PowerShellVersion = ''
@@ -105,13 +105,13 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-             Tags = @('PowerShellUniversal')
+            Tags       = @('PowerShellUniversal')
 
             # A URL to the license for this module.
-            # LicenseUri = ''
+            LicenseUri = 'https://github.com/steviecoaster/PowerShellUniversal.Apps.Bookworm/blob/main/LICENSE'
 
             # A URL to the main website for this project.
-            # ProjectUri = ''
+            ProjectUri = 'https://github.com/steviecoaster/PowerShellUniversal.Apps.Bookworm'
 
             # A URL to an icon representing this module.
             # IconUri = ''
