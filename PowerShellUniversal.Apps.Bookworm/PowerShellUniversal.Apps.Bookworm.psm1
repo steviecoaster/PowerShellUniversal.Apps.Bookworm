@@ -1,5 +1,9 @@
 # PowerShell Universal Library Manager App Module
 
+if(-not (Get-Command sqlite3)){
+    Write-PSULog -Message 'Sqlite3 is required to use this module, but was not found. Install sqlite3 version 3.46.1 or higher.' -Level Error
+    throw
+}
 # Dot source all public and private functions (cross-platform paths)
 $Public = @( Get-ChildItem -Path (Join-Path $PSScriptRoot 'public' '*.ps1') -ErrorAction SilentlyContinue )
 $Private = @( Get-ChildItem -Path (Join-Path $PSScriptRoot 'private' '*.ps1') -ErrorAction SilentlyContinue )
