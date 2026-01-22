@@ -219,7 +219,7 @@ $browse = New-UDPage -Id 'browse' -Name 'Browse' -Url '/Browse' -Content {
                                                     New-UDButton -Text 'Yes, Delete' -Color error -OnClick { 
                                                         Remove-Book -ISBN $isbnToDelete -Force
                                                         Hide-UDModal
-                                                        Sync-UDElement -Id 'bookGrid'
+                                                        Sync-UDElement -Id 'bookGrid' -Broadcast
                                                     }
                                                     New-UDButton -Text 'Cancel' -OnClick { Hide-UDModal }
                                                 }
