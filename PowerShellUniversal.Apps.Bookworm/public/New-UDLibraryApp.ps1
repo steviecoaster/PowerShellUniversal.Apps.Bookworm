@@ -3,10 +3,13 @@ function New-UDBookwormApp {
     Param()
     <#
     .SYNOPSIS
+    
     Creates a new Bookworm Manager app.
 
     .DESCRIPTION
+    
     Creates a new Bookworm Manager app for PowerShell Universal.
+    
     #>
 
     try {

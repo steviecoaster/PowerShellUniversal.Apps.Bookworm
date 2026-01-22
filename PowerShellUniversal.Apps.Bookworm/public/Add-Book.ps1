@@ -1,38 +1,50 @@
 function Add-Book {
     <#
     .SYNOPSIS
+
     Adds a book to the Bookworm database.
     
     .DESCRIPTION
+
     Inserts book metadata into the Books table. Uses INSERT OR REPLACE to handle duplicates.
     
     .PARAMETER ISBN
+
     The ISBN of the book (unique identifier).
     
     .PARAMETER Title
+
     The title of the book.
     
     .PARAMETER PublishDate
+
     The publication date.
     
     .PARAMETER Publishers
+
     The publisher(s) of the book.
     
     .PARAMETER NumberOfPages
+
     The number of pages in the book.
     
     .PARAMETER CoverUrl
+
     URL to the book's cover image.
     
     .PARAMETER ScannedAt
+
     The timestamp when the book was scanned.
     
     .PARAMETER DatabasePath
+
     Path to the SQLite database file. Defaults to module data directory.
     
     .EXAMPLE
+
     $metadata = Get-BookMetadata -ISBN '9780134685991'
     Add-Book @metadata
+    
     #>
     [CmdletBinding()]
     Param(

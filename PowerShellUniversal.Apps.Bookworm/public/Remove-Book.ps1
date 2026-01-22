@@ -4,40 +4,55 @@ function Remove-Book {
     Removes books from the Bookworm database.
     
     .DESCRIPTION
+    
     Deletes books from the Books table based on ISBN, Title pattern, or ID.
     Supports pipeline input and confirmation prompts.
     
     .PARAMETER ISBN
+    
     Remove book by ISBN (exact match).
     
     .PARAMETER Title
+    
     Remove books with titles matching this pattern (partial match, case-insensitive).
     Use with caution as it can match multiple books.
     
     .PARAMETER Id
+    
     Remove book by database ID (exact match).
     
     .PARAMETER DatabasePath
+    
     Path to the SQLite database file. Defaults to module data directory.
     
     .PARAMETER Force
+    
     Skip confirmation prompts.
     
     .EXAMPLE
+    
     Remove-Book -ISBN '9780134685991'
+    
     Removes the book with the specified ISBN.
     
     .EXAMPLE
+    
     Remove-Book -Id 5 -Force
+    
     Removes the book with ID 5 without confirmation.
     
     .EXAMPLE
+    
     Get-Book -Title 'Old Book' | Remove-Book
+    
     Gets books matching 'Old Book' and removes them (with confirmation).
     
     .EXAMPLE
+    
     Remove-Book -Title 'Test' -Force
+    
     Removes all books with 'Test' in the title without confirmation.
+    
     #>
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact='High', DefaultParameterSetName='ISBN')]
     Param(

@@ -1,4 +1,51 @@
 function Get-BookMetadata {
+    <#
+    .SYNOPSIS
+    
+    Retrieves book metadata from the Open Library API.
+    
+    .DESCRIPTION
+
+    Fetches detailed book information from Open Library using an ISBN.
+    Returns book title, publisher, publication date, page count, cover URL, and first sentence.
+    If the book is not found, returns a placeholder object with the ISBN.
+    
+    .PARAMETER ISBN
+
+    The ISBN (International Standard Book Number) of the book to look up.
+    Can be ISBN-10 or ISBN-13 format.
+    
+    .EXAMPLE
+
+    Get-BookMetadata -ISBN '9780134685991'
+    Retrieves metadata for Effective Java (3rd Edition).
+    
+    .EXAMPLE
+
+    $metadata = Get-BookMetadata -ISBN '9780062316097'
+    Add-Book @metadata
+
+    Fetches book metadata and pipes it to Add-Book for storage.
+    
+    .EXAMPLE
+
+    '9780134685991', '9780062316097' | ForEach-Object { Get-BookMetadata -ISBN $_ }
+
+    Retrieves metadata for multiple books.
+    
+    .OUTPUTS
+
+    PSCustomObject with properties:
+    - ISBN: The book's ISBN
+    - Title: Book title
+    - PublishDate: Publication date
+    - Publishers: Publisher name(s)
+    - NumberOfPages: Page count
+    - CoverUrl: URL to book cover image
+    - FirstSentence: Opening sentence of the book
+    - ScannedAt: Timestamp when metadata was retrieved
+    
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory)]

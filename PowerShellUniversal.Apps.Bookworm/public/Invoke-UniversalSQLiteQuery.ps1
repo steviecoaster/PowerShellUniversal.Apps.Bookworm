@@ -1,31 +1,40 @@
 function Invoke-UniversalSQLiteQuery {
     <#
     .SYNOPSIS
+    
     Execute SQLite queries using the sqlite3 command-line tool
     
     .DESCRIPTION
+    
     A wrapper function that executes SQLite queries using the native sqlite3 CLI.
     This provides cross-platform compatibility without requiring PowerShell modules.
     
     .PARAMETER Path
+    
     Path to the SQLite database file
     
     .PARAMETER Query
+    
     SQL query to execute
     
     .EXAMPLE
+    
     Invoke-UniversalSQLiteQuery -Path "./data/HerdManager.db" -Query "SELECT * FROM Cattle"
     
     .NOTES
+    
     Requires sqlite3 to be installed and available in PATH
+    
     #>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
-        [string]$Path,
+        [string]
+        $Path,
         
         [Parameter(Mandatory)]
-        [string]$Query
+        [string]
+        $Query
     )
     
     # Verify sqlite3 is available

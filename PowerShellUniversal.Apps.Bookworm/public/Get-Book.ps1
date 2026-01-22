@@ -1,43 +1,59 @@
 function Get-Book {
     <#
     .SYNOPSIS
+
     Retrieves books from the Bookworm database.
     
     .DESCRIPTION
+
     Queries the Books table based on ISBN, Title, or Author parameters.
     If no parameters are provided, returns all books.
     
     .PARAMETER ISBN
+
     Filter by ISBN (exact match).
     
     .PARAMETER Title
+
     Filter by Title (partial match, case-insensitive).
     
     .PARAMETER Author
+
     Filter by Author (partial match, case-insensitive).
     Note: Currently not implemented in schema, reserved for future use.
     
     .PARAMETER DatabasePath
+
     Path to the SQLite database file. Defaults to module data directory.
     
     .PARAMETER Limit
+
     Maximum number of results to return. Defaults to 100.
     
     .EXAMPLE
+
     Get-Book
+
     Returns all books in the Bookworm.
     
     .EXAMPLE
+
     Get-Book -ISBN '9780134685991'
+
     Returns the book with the specified ISBN.
     
     .EXAMPLE
+
     Get-Book -Title 'Clean Code'
+
     Returns all books with titles containing 'Clean Code'.
     
     .EXAMPLE
+
     Get-Book -Limit 10
+
     Returns the 10 most recently scanned books.
+    
     #>
     [CmdletBinding(DefaultParameterSetName='All')]
     Param(

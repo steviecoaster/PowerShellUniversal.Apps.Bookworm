@@ -1,11 +1,70 @@
 function Initialize-BookwormDatabase {
+    <#
+    .SYNOPSIS
+    
+    Initializes the Bookworm library SQLite database with required schema.
+    
+    .DESCRIPTION
+    
+    Creates the SQLite database and applies the schema to create necessary tables.
+    The schema includes the 'books' table with columns for ISBN, Title, PublishDate, Publishers, 
+    NumberOfPages, CoverUrl, FirstSentence, and ScannedAt timestamp.
+    
+    Schema can be provided as a file path or raw SQL string.
+    Uses "CREATE TABLE IF NOT EXISTS" to safely handle existing databases.
+    
+    .PARAMETER Schema
+    
+    Path to a SQL schema file (.sql) OR raw SQL string to execute.
+    If a file path is provided, the file content is read and executed.
+    If not specified, uses the default schema from data\Database-Schema.sql.
+    
+    .PARAMETER Database
+   
+    Path to the SQLite database file.
+    If not specified, uses the module's configured database path from Get-DatabasePath.
+    
+    .EXAMPLE
+    
+    Initialize-BookwormDatabase
+    
+    Creates the database using default schema and path.
+    
+    .EXAMPLE
+
+    Initialize-BookwormDatabase -Schema 'C:\custom\schema.sql' -Database 'C:\data\mybooks.db'
+
+    Initializes a custom database with a custom schema file.
+    
+    .EXAMPLE
+
+    $sql = "CREATE TABLE IF NOT EXISTS books (ISBN TEXT PRIMARY KEY, Title TEXT)"
+    Initialize-BookwormDatabase -Schema $sql -Database 'C:\temp\test.db'
+    
+    Creates a database with inline SQL schema.
+    
+    .EXAMPLE
+    
+    Initialize-BookwormDatabase -Database 'C:\temp\newlibrary.db'
+    
+    Creates a new database at a specific path using the default schema.
+    
+    .NOTES
+    
+    Requires the Invoke-UniversalSQLiteQuery function for database operations.
+    The function is idempotent - safe to run multiple times.
+    Uses "CREATE TABLE IF NOT EXISTS" to prevent errors on existing tables.
+    
+    #>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
-        [string]$Schema,
+        [string]
+        $Schema,
 
         [Parameter(Mandatory)]
-        [string]$Database
+        [string]
+        $Database
     )
 
     # Ensure db file exists (your SQLite wrapper requires it)
