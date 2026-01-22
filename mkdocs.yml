@@ -1,0 +1,4 @@
+site_name: Bookworm - Your personal library companion
+theme: readthedocs
+repo_url: https://github.com/steviecoaster/PowerShellUniversal.Apps.Bookworm
+docs_dir: ./docs
