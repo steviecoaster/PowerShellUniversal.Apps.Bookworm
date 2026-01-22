@@ -19,8 +19,8 @@ $browse = New-UDPage -Id 'browse' -Name 'Browse' -Url '/Browse' -Content {
                     textShadow = '2px 2px 4px rgba(0,0,0,0.3)'
                 }
                 New-UDTypography -Text 'Search and explore your book collection' -Variant body1 -Align center -Style @{
-                    color      = 'rgba(255,255,255,0.9)'
-                    marginTop  = '8px'
+                    color     = 'rgba(255,255,255,0.9)'
+                    marginTop = '8px'
                 }
             }
         }
@@ -61,7 +61,7 @@ $browse = New-UDPage -Id 'browse' -Name 'Browse' -Url '/Browse' -Content {
                         } 
                     } -Content {
                         New-UDTypography -Text "📖 $($AllBooks.Count) book$(if ($AllBooks.Count -ne 1) { 's' }) found" -Variant body1 -Style @{ 
-                            color = 'white'
+                            color      = 'white'
                             fontWeight = 'bold'
                         }
                     }
@@ -69,9 +69,9 @@ $browse = New-UDPage -Id 'browse' -Name 'Browse' -Url '/Browse' -Content {
                     # Grid of book cards
                     New-UDElement -Tag 'div' -Attributes @{ 
                         style = @{ 
-                            display = 'grid'
+                            display             = 'grid'
                             gridTemplateColumns = 'repeat(auto-fill, minmax(280px, 1fr))'
-                            gap = '16px'
+                            gap                 = '16px'
                         } 
                     } -Content {
                         foreach ($book in $AllBooks) {
@@ -92,15 +92,15 @@ $browse = New-UDPage -Id 'browse' -Name 'Browse' -Url '/Browse' -Content {
                                     else {
                                         New-UDElement -Tag 'div' -Attributes @{ 
                                             style = @{ 
-                                                width           = '80px'
-                                                height          = '120px'
-                                                borderRadius    = '4px'
-                                                background      = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                                                display         = 'flex'
-                                                alignItems      = 'center'
-                                                justifyContent  = 'center'
-                                                fontSize        = '32px'
-                                                flexShrink      = '0'
+                                                width          = '80px'
+                                                height         = '120px'
+                                                borderRadius   = '4px'
+                                                background     = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                                                display        = 'flex'
+                                                alignItems     = 'center'
+                                                justifyContent = 'center'
+                                                fontSize       = '32px'
+                                                flexShrink     = '0'
                                             } 
                                         } -Content {
                                             New-UDHTML -Markup '📖'
@@ -109,10 +109,10 @@ $browse = New-UDPage -Id 'browse' -Name 'Browse' -Url '/Browse' -Content {
                                     
                                     New-UDStack -Direction 'column' -Justify 'center' -Content {
                                         New-UDTypography -Text $book.Title -Variant body1 -Style @{ 
-                                            fontWeight = 'bold'
-                                            overflow = 'hidden'
-                                            textOverflow = 'ellipsis'
-                                            display = '-webkit-box'
+                                            fontWeight      = 'bold'
+                                            overflow        = 'hidden'
+                                            textOverflow    = 'ellipsis'
+                                            display         = '-webkit-box'
                                             WebkitLineClamp = '2'
                                             WebkitBoxOrient = 'vertical'
                                         }
@@ -204,7 +204,29 @@ $browse = New-UDPage -Id 'browse' -Name 'Browse' -Url '/Browse' -Content {
                                         New-UDTypography -Text "Book Details" -Variant h6 -Style @{ fontWeight = 'bold' }
                                     }
                                 } -Footer {
-                                    New-UDButton -Text "Close" -OnClick { Hide-UDModal } -Variant contained -Color primary
+                                    New-UDStack -Spacing 2 -Direction row -Children {
+                                        New-UDButton -Text 'Delete' -OnClick { 
+                                            $isbnToDelete = $book.ISBN
+                                            Hide-UDModal
+    
+                                            Show-UDModal -Content {
+                                                New-UDTypography -Text "Are you sure you want to delete this book?" -Variant h6
+                                                New-UDTypography -Text "ISBN: $isbnToDelete" -Variant body2 -Style @{marginTop = '8px' }
+                                            } -Header {
+                                                New-UDTypography -Text "⚠️ Confirm Deletion" -Variant h6
+                                            } -Footer {
+                                                New-UDStack -Direction row -Spacing 2 -Content {
+                                                    New-UDButton -Text 'Yes, Delete' -Color error -OnClick { 
+                                                        Remove-Book -ISBN $isbnToDelete -Force
+                                                        Hide-UDModal
+                                                        Sync-UDElement -Id 'bookGrid'
+                                                    }
+                                                    New-UDButton -Text 'Cancel' -OnClick { Hide-UDModal }
+                                                }
+                                            } -FullWidth -MaxWidth 'xs'
+                                        }
+                                        New-UDButton -Text "Close" -OnClick { Hide-UDModal } -Variant contained -Color primary
+                                    }
                                 } -FullWidth -MaxWidth 'sm'
                             }
                         }
