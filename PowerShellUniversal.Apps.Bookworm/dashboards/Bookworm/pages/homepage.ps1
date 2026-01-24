@@ -95,7 +95,6 @@ $homepage = New-UDPage -id 'homepage' -Name 'Home' -Url '/Home' -Content {
                         try {
                             $BookMetadata = Get-BookMetadata -ISBN $ISBN
                             $null = $BookMetadata | Add-Book
-                            Show-UDToast -Message "✅ Added: $($BookMetadata.Title)" -Duration 3000 -MessageColor success
                             Sync-UDElement -Id 'recentBooks'
                             Sync-UDElement -Id 'bookGrid' -Broadcast
                         }
