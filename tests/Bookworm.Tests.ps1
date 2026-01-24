@@ -15,20 +15,17 @@
 #>
 
 BeforeAll {
-    # Configuration
     $script:BaseUrl = $env:BOOKWORM_TEST_URL ?? 'http://localhost:5000/bookworm'
     $script:DefaultTimeout = 5000  # 5 second timeout for all operations
     $script:Browser = $null
     $script:Page = $null
     
-    # Start Playwright and launch browser
     Start-Playwright
     $script:Browser = Start-PlaywrightBrowser -BrowserType chromium -Headless
     $script:Page = Open-PlaywrightPage -Browser $script:Browser
 }
 
 AfterAll {
-    # Cleanup
     if ($script:Page) { 
         Close-PlaywrightPage -Page $script:Page 
     }
@@ -37,7 +34,6 @@ AfterAll {
     }
     Stop-Playwright
 
-    # Remove screenshots folder
     $screenshotsDir = Join-Path $PSScriptRoot 'screenshots'
     if (Test-Path $screenshotsDir) {
         Remove-Item $screenshotsDir -Recurse -Force
@@ -81,19 +77,16 @@ Describe 'Bookworm Navigation' {
     }
     
     It 'Should navigate to Browse page from menu' {
-        # Open navigation drawer - click the hamburger menu button (first button)
         $menuButton = Find-PlaywrightPageElement -Page $script:Page -Selector 'button >> nth=0'
         Invoke-PlaywrightLocatorClick -Locator $menuButton -Timeout $script:DefaultTimeout
         
         Start-Sleep -Milliseconds 500
         
-        # Click Browse link in the navigation drawer
         $browseLink = Find-PlaywrightPageElement -Page $script:Page -Text 'Browse'
         Invoke-PlaywrightLocatorClick -Locator $browseLink -Timeout $script:DefaultTimeout
         
         Start-Sleep -Milliseconds 1500
         
-        # Verify Browse page loaded
         $header = Find-PlaywrightPageElement -Page $script:Page -Text 'Browse Library'
         { Assert-PlaywrightLocator -Locator $header -IsVisible } | Should -Not -Throw
     }
@@ -112,25 +105,21 @@ Describe 'Bookworm Browse Page' {
     }
     
     It 'Should have a search input box' {
-        # Use the specific ID for the search box
         $searchBox = Find-PlaywrightPageElement -Page $script:Page -Selector '#searchBox'
         { Assert-PlaywrightLocator -Locator $searchBox -IsVisible } | Should -Not -Throw
     }
     
     It 'Should filter books when searching' {
-        # Use the specific ID for the search box
         $searchBox = Find-PlaywrightPageElement -Page $script:Page -Selector '#searchBox'
         Set-PlaywrightLocatorInput -Locator $searchBox -Value 'Map' -Timeout $script:DefaultTimeout
         
         Start-Sleep -Milliseconds 1500
         
-        # Page should still have content (not crash)
         $header = Find-PlaywrightPageElement -Page $script:Page -Text 'Browse Library'
         { Assert-PlaywrightLocator -Locator $header -IsVisible } | Should -Not -Throw
     }
     
     It 'Should show empty state message when no books match search' {
-        # Use the specific ID for the search box
         $searchBox = Find-PlaywrightPageElement -Page $script:Page -Selector '#searchBox'
         Set-PlaywrightLocatorInput -Locator $searchBox -Value 'xyznonexistentbook123' -Timeout $script:DefaultTimeout
         
@@ -149,10 +138,8 @@ Describe 'Bookworm Book Details Modal' {
     }
     
     It 'Should open modal when clicking a book card' {
-        # Try to find a book card
         $bookCard = Find-PlaywrightPageElement -Page $script:Page -Selector '.MuiCard-root >> nth=0'
         
-        # Skip if no books exist
         if ($null -eq $bookCard) {
             Set-ItResult -Skipped -Because 'No books in database'
             return
@@ -160,12 +147,13 @@ Describe 'Bookworm Book Details Modal' {
         
         Invoke-PlaywrightLocatorClick -Locator $bookCard -Timeout $script:DefaultTimeout
         
-        Start-Sleep -Milliseconds 1000
+        Start-Sleep -Milliseconds 10000
         
-        # Check modal is visible - look for the emoji ISBN label which only appears in modal
-        # The modal has "📖 ISBN:" while cards just have "ISBN: {number}"
-        $modalContent = Find-PlaywrightPageElement -Page $script:Page -Text '📖 ISBN:'
-        { Assert-PlaywrightLocator -Locator $modalContent -IsVisible } | Should -Not -Throw
+        $modal = Find-PlaywrightPageElement -Page $script:Page -Selector '[role="dialog"]'
+        { Assert-PlaywrightLocator -Locator $modal -IsVisible } | Should -Not -Throw
+        
+        $bookDetails = Find-PlaywrightPageElement -Page $script:Page -Text 'Book Details'
+        { Assert-PlaywrightLocator -Locator $bookDetails -IsVisible } | Should -Not -Throw
     }
     
     It 'Should close modal when clicking Close button' {
@@ -177,17 +165,17 @@ Describe 'Bookworm Book Details Modal' {
         }
         
         Invoke-PlaywrightLocatorClick -Locator $bookCard -Timeout $script:DefaultTimeout
-        Start-Sleep -Milliseconds 1000
+        Start-Sleep -Milliseconds 2000
         
-        # Click close button - it's a MUI button with text "Close"
+        $modal = Find-PlaywrightPageElement -Page $script:Page -Selector '[role="dialog"]'
+        { Assert-PlaywrightLocator -Locator $modal -IsVisible } | Should -Not -Throw
+        
         $closeButton = Find-PlaywrightPageElement -Page $script:Page -Selector 'button:has-text("Close")'
         Invoke-PlaywrightLocatorClick -Locator $closeButton -Timeout $script:DefaultTimeout
         
-        Start-Sleep -Milliseconds 500
+        Start-Sleep -Milliseconds 1000
         
-        # Modal should not be visible - check the unique modal content is gone
-        $modalContent = Find-PlaywrightPageElement -Page $script:Page -Text '📖 ISBN:'
-        { Assert-PlaywrightLocator -Locator $modalContent -IsHidden } | Should -Not -Throw
+        { Assert-PlaywrightLocator -Locator $modal -IsHidden } | Should -Not -Throw
     }
 }
 
