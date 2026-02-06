@@ -51,7 +51,7 @@ if (-not (Test-Path $BasePath)) {
 
 # Initialize DB + schema (idempotent)
 Initialize-BookwormDbFile -Database $script:DatabasePath
-Initialize-BookwormDatabase -Schema $SchemaPath -Database $script:DatabasePath
+Initialize-BookwormDatabase -Schema $SchemaPath -Database $script:DatabasePath -Verbose
 
 # Ensure sensible PRAGMA settings for concurrency/ durability even if DB already existed
 try {

@@ -65,6 +65,10 @@ function Add-Book {
         $Publishers,
         
         [Parameter(ValueFromPipelineByPropertyName)]
+        [string]
+        $Author,
+    
+        [Parameter(ValueFromPipelineByPropertyName)]
         [int]
         $NumberOfPages,
         
@@ -93,7 +97,8 @@ function Add-Book {
         
         try {
             # Escape single quotes in strings for SQLite
-            $EscapedTitle = $Title -replace "'", "''"
+            $EscapedTitle = $Title -replace "'", "''"            
+            $EscapedAuthor = if ($Author) { $Author -replace "'", "''" } else { '' }            
             $EscapedPublishers = $Publishers -replace "'", "''"
             $EscapedCoverUrl = if ($CoverUrl) { $CoverUrl -replace "'", "''" } else { '' }
             $EscapedFirstSentence = if ($FirstSentence) { $FirstSentence -replace "'", "''" } else { '' }
@@ -103,8 +108,8 @@ function Add-Book {
             
             # Use INSERT OR REPLACE to handle duplicates (updates if ISBN exists)
             $Query = @"
-INSERT OR REPLACE INTO Books (ISBN, Title, PublishDate, Publishers, NumberOfPages, CoverUrl, FirstSentence, ScannedAt)
-VALUES ('$EscapedISBN', '$EscapedTitle', '$EscapedPublishDate', '$EscapedPublishers', $NumberOfPages, '$EscapedCoverUrl', '$EscapedFirstSentence', '$EscapedScannedAt')
+INSERT OR REPLACE INTO Books (ISBN, Title, Author, PublishDate, Publishers, NumberOfPages, CoverUrl, FirstSentence, ScannedAt)
+VALUES ('$EscapedISBN', '$EscapedTitle', '$EscapedAuthor', '$EscapedPublishDate', '$EscapedPublishers', $NumberOfPages, '$EscapedCoverUrl', '$EscapedFirstSentence', '$EscapedScannedAt')
 "@
             
             Invoke-UniversalSQLiteQuery -Path $DatabasePath -Query $Query
@@ -115,6 +120,7 @@ VALUES ('$EscapedISBN', '$EscapedTitle', '$EscapedPublishDate', '$EscapedPublish
             [PSCustomObject]@{
                 ISBN          = $ISBN
                 Title         = $Title
+                Author        = $Author
                 PublishDate   = $PublishDate
                 Publishers    = $Publishers
                 NumberOfPages = $NumberOfPages

@@ -75,6 +75,54 @@ $homepage = New-UDPage -id 'homepage' -Name 'Home' -Url '/Home' -Content {
                     New-UDStack -Direction 'column' -Content {
                         New-UDTypography -Text 'Scan Book' -Variant h5 -Style @{ fontWeight = 'bold' }
                         New-UDTypography -Text 'Point your camera at the ISBN barcode' -Variant body2
+                        New-UDButton -Text 'Manual Search' -OnClick {
+                            Show-UDModal -Content {
+                                New-UDStack -Direction 'column' -Spacing 3 -Content {
+                                    New-UDElement -Tag 'div' -Attributes @{ 
+                                        style = @{ 
+                                            background   = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                                            padding      = '20px'
+                                            borderRadius = '8px'
+                                            marginBottom = '16px'
+                                        } 
+                                    } -Content {
+                                        New-UDTypography -Text '🔍 Manual ISBN Search' -Variant h5 -Style @{ color = 'white'; fontWeight = 'bold'; textAlign = 'center' }
+                                    }
+                                    
+                                    New-UDTextbox -Id 'manualISBN' -Label 'ISBN (10 or 13 digits)' -FullWidth -Placeholder 'e.g., 9780134685991'
+                                    
+                                    New-UDButton -Text 'Search & Add Book' -FullWidth -Variant contained -Color primary -OnClick {
+                                        $ISBN = (Get-UDElement -Id 'manualISBN').Value
+                                        
+                                        if ([string]::IsNullOrWhiteSpace($ISBN)) {
+                                            Show-UDToast -Message "⚠️ Please enter an ISBN" -Duration 3000 -MessageColor warning
+                                            return
+                                        }
+                                        
+                                        Show-UDToast -Message "🔍 Searching: $ISBN" -Duration 2000
+                                        Hide-UDModal
+                                        
+                                        try {
+                                            $BookMetadata = Get-BookMetadata -ISBN $ISBN
+                                            $null = $BookMetadata | Add-Book
+                                            Sync-UDElement -Id 'recentBooks'
+                                            Sync-UDElement -Id 'bookGrid' -Broadcast
+                                            Show-UDToast -Message "✅ Book added successfully!" -Duration 3000 -MessageColor success
+                                        }
+                                        catch {
+                                            Show-UDToast -Message "❌ Error: $_" -Duration 4000 -MessageColor error
+                                        }
+                                    }
+                                }
+                            } -Header {
+                                New-UDStack -Direction 'row' -AlignItems 'center' -Spacing 1 -Content {
+                                    New-UDHTML -Markup '📚'
+                                    New-UDTypography -Text "Add Book Manually" -Variant h6 -Style @{ fontWeight = 'bold' }
+                                }
+                            } -Footer {
+                                New-UDButton -Text "Cancel" -OnClick { Hide-UDModal } -Variant outlined
+                            } -FullWidth -MaxWidth 'sm'
+                        }
                     }
                 }
                 
@@ -151,10 +199,10 @@ $homepage = New-UDPage -id 'homepage' -Name 'Home' -Url '/Home' -Content {
                                                 New-UDTypography -Text $book.Title -Variant body1 -Style @{ fontWeight = 'bold' }
                                                 New-UDTypography -Text "ISBN: $($book.ISBN)" -Variant caption -Style @{ fontFamily = 'monospace' }
                                                 
-                                                if ($book.Publishers -and $book.Publishers -ne 'N/A') {
+                                                if ($book.Author -and $book.Author -ne 'N/A') {
                                                     New-UDStack -Direction 'row' -AlignItems 'center' -Spacing 1 -Content {
-                                                        New-UDHTML -Markup '🏢'
-                                                        New-UDTypography -Text $book.Publishers -Variant caption
+                                                        New-UDHTML -Markup '✒️'
+                                                        New-UDTypography -Text $book.Author -Variant caption
                                                     }
                                                 }
                                                 
@@ -205,6 +253,11 @@ $homepage = New-UDPage -id 'homepage' -Name 'Home' -Url '/Home' -Content {
                                                                 New-UDTypography -Text $book.Publishers -Variant body2
                                                             }
                                                             
+                                                            if ($Book.Author -and $book.Author -ne 'N/A') {
+                                                                New-UDTypography -Text "✒️: Author" -Variant subtitle2 -Style @{ fontWeight = 'bold'; color = '#667eea' }
+                                                                New-UDTypography -Text $book.Author -Variant body2 -Style @{ fontFamily = 'monospace' }
+                                                            }
+
                                                             if ($book.PublishDate -and $book.PublishDate -ne 'N/A') {
                                                                 New-UDTypography -Text "📅 Published:" -Variant subtitle2 -Style @{ fontWeight = 'bold'; color = '#667eea' }
                                                                 New-UDTypography -Text $book.PublishDate -Variant body2

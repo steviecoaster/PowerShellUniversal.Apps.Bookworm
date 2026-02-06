@@ -46,7 +46,8 @@ $browse = New-UDPage -Id 'browse' -Name 'Browse' -Url '/Browse' -Content {
                     $AllBooks = $AllBooks | Where-Object {
                         $_.Title -like "*$SearchTerm*" -or 
                         $_.ISBN -like "*$SearchTerm*" -or 
-                        $_.Publishers -like "*$SearchTerm*"
+                        $_.Publishers -like "*$SearchTerm*" -or
+                        $_.Author -like "*$SearchTerm*"
                     }
                 }
                 
@@ -118,10 +119,10 @@ $browse = New-UDPage -Id 'browse' -Name 'Browse' -Url '/Browse' -Content {
                                         }
                                         New-UDTypography -Text "ISBN: $($book.ISBN)" -Variant caption -Style @{ fontFamily = 'monospace' }
                                         
-                                        if ($book.Publishers -and $book.Publishers -ne 'N/A') {
+                                        if ($book.Author -and $book.Author -ne 'N/A') {
                                             New-UDStack -Direction 'row' -AlignItems 'center' -Spacing 1 -Content {
-                                                New-UDHTML -Markup '🏢'
-                                                New-UDTypography -Text $book.Publishers -Variant caption
+                                                New-UDHTML -Markup '✒️'
+                                                New-UDTypography -Text $book.Author -Variant caption
                                             }
                                         }
                                         
@@ -172,6 +173,10 @@ $browse = New-UDPage -Id 'browse' -Name 'Browse' -Url '/Browse' -Content {
                                                         New-UDTypography -Text $book.Publishers -Variant body2
                                                     }
                                                     
+                                                    if($Book.Author -and $book.Author -ne 'N/A') {
+                                                        New-UDTypography -Text "✒️: Author" -Variant subtitle2 -Style @{ fontWeight = 'bold'; color = '#667eea' }
+                                                        New-UDTypography -Text $book.Author -Variant body2 -Style @{ fontFamily = 'monospace'}
+                                                    }
                                                     if ($book.PublishDate -and $book.PublishDate -ne 'N/A') {
                                                         New-UDTypography -Text "📅 Published:" -Variant subtitle2 -Style @{ fontWeight = 'bold'; color = '#667eea' }
                                                         New-UDTypography -Text $book.PublishDate -Variant body2

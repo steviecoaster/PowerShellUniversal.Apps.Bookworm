@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS Books (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
     ISBN TEXT NOT NULL UNIQUE,
     Title TEXT NOT NULL,
+    Author TEXT,
     PublishDate TEXT,
     Publishers TEXT,
     NumberOfPages INTEGER,

@@ -95,5 +95,29 @@ function Initialize-BookwormDatabase {
     }
 
     # Apply schema (safe due to IF NOT EXISTS)
-    Invoke-UniversalSQLiteQuery -Path $Database -Query $schemaSql | Out-Null
+    $null = Invoke-UniversalSQLiteQuery -Path $Database -Query $schemaSql
+
+    # MIGRATIONS: These queries will run on module upgrades to ensure the latest schema
+
+    # Migration: Add Author column to Book table
+    Write-Verbose -Message "PERFORMING MIGRATION: Add Author column to Book table"
+    $invokeUniversalSQLiteQuerySplat = @{
+        Path = (Get-DatabasePath)
+        Query = "SELECT COUNT(*) as ColumnExists FROM pragma_table_info('Books') WHERE name = 'Author';"
+    }
+
+    $addColumn = Invoke-UniversalSQLiteQuery @invokeUniversalSQLiteQuerySplat
+
+    if(-not $addColumn.ColumnExists -eq 1) {
+
+        $invokeUniversalSQLiteQuerySplat = @{
+            Path = $DatabasePath
+            Query = "ALTER TABLE Books ADD COLUMN Author TEXT"
+        }
+
+        Invoke-UniversalSQLiteQuery @invokeUniversalSQLiteQuerySplat
+    }
+    else {
+        Write-Verbose "Migration not needed, skipped"
+    }
 }

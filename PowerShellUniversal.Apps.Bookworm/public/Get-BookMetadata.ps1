@@ -57,18 +57,38 @@ function Get-BookMetadata {
         
         try {
             $BookInfo = Invoke-RestMethod -Uri "https://openlibrary.org/isbn/$ISBN.json" -ErrorAction Stop
-
+            Write-Verbose "Found: $($BookInfo.title)"
             $CoverUrl = if ($BookInfo.covers -and $BookInfo.covers.Count -gt 0) {
                 "https://covers.openlibrary.org/b/id/$($BookInfo.covers[0])-M.jpg"
             }
             else {
                 $null
             }
-                            
-            # Create book object
+
+            $workSlug = (Split-path -leaf $BookInfo.works.key).trim('{}')
+            $works = Invoke-RestMethod "https://openlibrary.org/works/$workSlug.json"
+
+            # Some books may have co-authors, so we need to handle that
+            $authorCollection = [System.Collections.Generic.List[pscustomobject]]::new()
+
+            if ($works.authors.Count -gt 1) {
+
+                $works.authors.author | Foreach-Object {
+                    $authorSlug = (Split-Path -Leaf $_).Trim('{}')
+                    $author = Invoke-RestMethod "https://openlibrary.org/authors/$authorSlug.json"
+                    $authorCollection.Add($author)
+                }
+            }
+            else {
+                $authorSlug = (Split-Path -Leaf $works.authors.author).Trim('{}')
+                $author = Invoke-RestMethod "https://openlibrary.org/authors/$authorSlug.json"
+                $authorCollection.Add($author)
+            }
+
             $Book = [pscustomobject]@{
                 ISBN          = if ($BookInfo.isbn_13) { $BookInfo.isbn_13[0] } else { $ISBN }
                 Title         = $BookInfo.title
+                Author        = $authorCollection.name
                 PublishDate   = $BookInfo.publish_date
                 Publishers    = $BookInfo.publishers -join ', '
                 NumberOfPages = $BookInfo.number_of_pages
